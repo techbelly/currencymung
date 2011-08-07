@@ -1,0 +1,15 @@
+{
+  "name": "Currency Munger",
+  "version": "1.0",
+  "description": "Make currency amounts a bit more understandable",
+  "browser_action": {
+    "default_icon": "icon.png",
+    "popup": "popup.html"
+  },
+  "permissions": [ "tabs", "http://*/*"],
+  "content_scripts": 	
+  	[{
+  	    "matches": ["http://*/*"],
+  		"js": [ "currency_munger.js" ]
+  	}]
+} 

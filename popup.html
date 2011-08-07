@@ -1,0 +1,64 @@
+<style>
+body {
+  min-width:357px;
+  overflow-x:hidden;
+}
+</style>
+
+<script>
+  var conversion_factors = {};
+  var styles_inserted = false;
+
+  var sendToCurrentTab = function(command,callback) {
+    chrome.tabs.getSelected(null, function(tab) {
+      chrome.tabs.sendRequest(tab.id,command,callback);
+    });
+  }
+
+  var highlight = function(v) {
+    if (!styles_inserted) {
+      addGlobalStyles('.money_equivalent { color: #990000 ! important; font-weight: bold;}');
+      styles_inserted = true;
+    }
+    sendToCurrentTab({command:'highlight',value:v});
+  }
+
+  var unhighlight = function() {
+    sendToCurrentTab({command:'clear'});
+  }
+
+  var addGlobalStyles = function(css) {
+    chrome.tabs.getSelected(null, function(tab) {
+	    chrome.tabs.insertCSS(tab.id,{code:css});
+	  });
+	}
+
+  var create_menu = function() {	
+	  var menu = '';
+	  for (var i in conversion_factors) {
+	    menu += '<li><a href="#" onclick="highlight(\''+i+'\')">' + i + '</a></li>';
+	  };
+	  menu += '<li><a href="#" onclick="unhighlight()">[x] clear all</a></li>';
+	
+	  var header = document.createElement('h1');
+	  header.innerHTML = "Is it worth it?"
+	  
+	  var menuobj = document.createElement('ul');
+	  menuobj.className = "money_menu"
+	  menuobj.innerHTML = menu;
+	  var body = document.getElementsByTagName('body')[0];
+	  body.appendChild(header);
+	  body.appendChild(menuobj);
+	};
+	
+	var init = function(data) {
+	   conversion_factors = data;
+	   create_menu();
+	};
+	
+	sendToCurrentTab({command:"getSettings"}, init);
+	
+</script>
+<body>
+  
+</body>
